@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { AuthService } from './auth.service';;
 import { JwtService } from '@nestjs/jwt';
@@ -11,6 +11,7 @@ export class AuthController {
 
     @Post('/signup')
     async signUp(@Res() response, @Body() user: User){
+        console.log('AuthController at signUp')
         const newUser =  await this.authService.signUp(user);
         return response.status(HttpStatus.CREATED).json({
             newUser

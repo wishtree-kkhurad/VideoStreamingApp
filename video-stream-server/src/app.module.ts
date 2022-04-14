@@ -18,6 +18,8 @@ import { UserService } from './user/user.service';
 import { VideoService } from './video/video.service';
 import { User, UserSchema } from './user/schemas/user.schema';
 import { Video, VideoSchema } from './video/schemas/video.schema';
+import { AuthController } from './user/auth.controller';
+import { AuthService } from './user/auth.service';
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import { Video, VideoSchema } from './video/schemas/video.schema';
       storage: diskStorage({
         destination: './public',
         filename: (req, file, cb) =>{
+          console.log('check file = ', file)
           const ext = file.mimetype.split('/')[1];
+          console.log('ext = ', ext)
           cb(null, `${uuidv4()}-${Date.now()}.${ext}`);
         }
       })
@@ -45,14 +49,14 @@ import { Video, VideoSchema } from './video/schemas/video.schema';
       rootPath: join(__dirname, '..', 'public'),
     })
   ],
-  controllers: [AppController, UserController],
-  providers: [AppService, UserService, VideoService],
+  controllers: [AppController, UserController, AuthController, VideoController],
+  providers: [AppService, UserService, VideoService, AuthService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer){
     consumer.apply(isAuthenticated)
     .exclude({
-      path: '/video//:id',
+      path: '/video/:id',
       method: RequestMethod.GET
     }).
     forRoutes(VideoController)

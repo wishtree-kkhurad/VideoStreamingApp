@@ -24,25 +24,31 @@ let VideoService = class VideoService {
         this.videoModel = videoModel;
     }
     async createVideo(video) {
+        console.log('VideoService at createVideo');
         const newVideo = new this.videoModel(video);
         return newVideo.save();
     }
     async readVideo(id) {
+        console.log('VideoService at readVideo');
+        console.log('id = ', id);
         if (id.id) {
             return this.videoModel.findOne({ _id: id.id }).populate('createdBy').exec();
         }
         return this.videoModel.find().populate('createdBy').exec();
     }
     async streamVideo(id, response, request) {
+        console.log('VideoService at streamVideo');
         try {
             const data = await this.videoModel.findOne({ _id: id });
             if (!data) {
                 throw new common_1.NotFoundException(null, 'VideoNotFound');
             }
             const { range } = request.headers;
+            console.log('request.headers in backend = ', request);
             if (range) {
                 const { video } = data;
                 const videoPath = (0, fs_1.statSync)((0, path_1.join)(process.cwd(), `./public/${video}`));
+                console.log('videoPath in VideoService at streamVideo = ', videoPath);
                 const CHUNK_SIZE = 1 * 1e6;
                 const start = Number(range.replace(/\D/g, ''));
                 const end = Math.min(start + CHUNK_SIZE, videoPath.size - 1);

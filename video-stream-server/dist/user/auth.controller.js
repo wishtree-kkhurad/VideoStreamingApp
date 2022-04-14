@@ -24,6 +24,7 @@ let AuthController = class AuthController {
         this.jwtService = jwtService;
     }
     async signUp(response, user) {
+        console.log('AuthController at signUp');
         const newUser = await this.authService.signUp(user);
         return response.status(common_1.HttpStatus.CREATED).json({
             newUser

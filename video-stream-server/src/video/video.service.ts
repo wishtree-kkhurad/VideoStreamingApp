@@ -20,11 +20,16 @@ export class VideoService {
   ) {}
 
   async createVideo(video: Object): Promise<Video>{
+      console.log('VideoService at createVideo');
+      
       const newVideo = new this.videoModel(video);
       return newVideo.save();
   }
 
   async readVideo(id): Promise<any> {
+    console.log('VideoService at readVideo');
+    console.log('id = ', id)
+
       if(id.id){
         return this.videoModel.findOne({ _id:id.id }).populate('createdBy').exec();
       }
@@ -33,6 +38,8 @@ export class VideoService {
 
   //create the streamVideo function to send a video as a stream to the client
   async streamVideo(id: string, response: Response, request: Request){
+    console.log('VideoService at streamVideo');
+
       try{
         // database to get the video’s details according to id
           const data = await this.videoModel.findOne({ _id: id})
@@ -40,15 +47,17 @@ export class VideoService {
             throw new NotFoundException(null, 'VideoNotFound')
           }
         //get the initial range value from the request headers
-          const { range } = request.headers;
+          const  { range }  = request.headers;
+
+          console.log('request.headers in backend = ', request);
           if(range){
               const { video } = data;
               //use the video details to get the video from the file system
               const videoPath = statSync(join(process.cwd(), `./public/${video}`));
-              
+              console.log('videoPath in VideoService at streamVideo = ', videoPath)
               //break the video into 1mb chunks
               const CHUNK_SIZE = 1 * 1e6;
-              const start = Number(range.replace(/\D/g, ''));
+              const start = Number(range.replace(/\D/g, '')); //\D used to search non digit char
               const end = Math.min(start + CHUNK_SIZE, videoPath.size - 1);
               const videoLength = end - start + 1;
               response.status(206);

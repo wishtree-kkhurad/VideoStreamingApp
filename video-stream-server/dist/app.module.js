@@ -27,11 +27,13 @@ const user_service_1 = require("./user/user.service");
 const video_service_1 = require("./video/video.service");
 const user_schema_1 = require("./user/schemas/user.schema");
 const video_schema_1 = require("./video/schemas/video.schema");
+const auth_controller_1 = require("./user/auth.controller");
+const auth_service_1 = require("./user/auth.service");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(app_middleware_1.isAuthenticated)
             .exclude({
-            path: '/video//:id',
+            path: '/video/:id',
             method: common_1.RequestMethod.GET
         }).
             forRoutes(video_controller_1.VideoController);
@@ -47,7 +49,9 @@ AppModule = __decorate([
                 storage: (0, multer_1.diskStorage)({
                     destination: './public',
                     filename: (req, file, cb) => {
+                        console.log('check file = ', file);
                         const ext = file.mimetype.split('/')[1];
+                        console.log('ext = ', ext);
                         cb(null, `${(0, uuid_1.v4)()}-${Date.now()}.${ext}`);
                     }
                 })
@@ -62,8 +66,8 @@ AppModule = __decorate([
                 rootPath: (0, posix_1.join)(__dirname, '..', 'public'),
             })
         ],
-        controllers: [app_controller_1.AppController, user_controller_1.UserController],
-        providers: [app_service_1.AppService, user_service_1.UserService, video_service_1.VideoService],
+        controllers: [app_controller_1.AppController, user_controller_1.UserController, auth_controller_1.AuthController, video_controller_1.VideoController],
+        providers: [app_service_1.AppService, user_service_1.UserService, video_service_1.VideoService, auth_service_1.AuthService],
     })
 ], AppModule);
 exports.AppModule = AppModule;

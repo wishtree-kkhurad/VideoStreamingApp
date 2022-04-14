@@ -38,6 +38,10 @@ export class VideoController {
     @UploadedFiles()
     files: { video?: Express.Multer.File[]; cover?: Express.Multer.File[] },
   ) {
+    console.log('VideoController at createVideo');
+    console.log('video = ', video);
+    console.log('files = ', files);
+
     const requestBody = {
       createdBy: request.user,
       title: video.title,
@@ -52,11 +56,13 @@ export class VideoController {
 
   @Get()
   async readVideo(@Query() id): Promise<Object> {
+    console.log('VideoController at readVideo');
     return await this.videoService.readVideo(id);
   }
 
   @Get('/:id')
   async streamVideo(@Param('id') id, @Res() response, @Req() request) {
+    console.log('VideoController at streamVideo');
     return this.videoService.streamVideo(id, response, request);
   }
 

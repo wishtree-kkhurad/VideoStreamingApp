@@ -22,6 +22,9 @@ let VideoController = class VideoController {
         this.videoService = videoService;
     }
     async createVideo(response, request, video, files) {
+        console.log('VideoController at createVideo');
+        console.log('video = ', video);
+        console.log('files = ', files);
         const requestBody = {
             createdBy: request.user,
             title: video.title,
@@ -34,9 +37,11 @@ let VideoController = class VideoController {
         });
     }
     async readVideo(id) {
+        console.log('VideoController at readVideo');
         return await this.videoService.readVideo(id);
     }
     async streamVideo(id, response, request) {
+        console.log('VideoController at streamVideo');
         return this.videoService.streamVideo(id, response, request);
     }
     async updateVideo(response, id, video) {
